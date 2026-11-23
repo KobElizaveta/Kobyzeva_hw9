@@ -1,5 +1,6 @@
 ﻿using hw9_Tumakov.Class;
 using hw9_Tumakov.Enum;
+using hw9_Tumakov.Interface;
 using System.Drawing;
 
 namespace hw9_Tumakov
@@ -35,7 +36,7 @@ namespace hw9_Tumakov
             }
         }
 
-        static object AddFigure()
+        static Figure AddFigure()
         {
             Console.WriteLine("Добавление фигуры");
             bool flagAdd = true;
@@ -86,31 +87,65 @@ namespace hw9_Tumakov
 
         static void ActionWithFigure()
         {
-            var figure = AddFigure();
+            Figure figure = AddFigure();
 
             bool flag = true;
             while (flag)
             {
-                Console.WriteLine("Дейсвтия: 1 - Расчет Площадь, 2 - Вывести информацию, 3 - Поменять цвет, 4 - Изменить статус видимости,\n\t5 - Сдвинуть по оси OX, 6 - Сдвинуть по оси OY, 7 - Изменить фигуру, 8 - Выйти");
+                Console.WriteLine("Дейсвтия: 1 - Расчет Площадь, 2 - Вывести информацию, 3 - Поменять цвет, 4 - Изменить статус видимости,\n\t" +
+                    "5 - Сдвинуть по оси OX, 6 - Сдвинуть по оси OY, 7 - Изменить фигуру, 8 - Выйти");
                 string action = Console.ReadLine();
                 switch (action)
                 {
                     case "1":
-                        figure.Area();
+                        if(figure is ICalculateArea figureArea)
+                        {
+                            figureArea.Area();
+                        }
+                        else { Console.WriteLine("Для данной фигуры расчитать площадь невозможно"); }
                         break;
                     case "2":
+                        figure.PrintOnConsole();
                         break;
                     case "3":
+                        Console.Write("Введите цвет (Red, Blue, Green, Black, White):  ");
+                        string newColor = Console.ReadLine();
+                        if(figure.ChangeColor(Color.FromName(newColor)))
+                        {
+                            Console.WriteLine("Цвет изменен");
+                        }
+                        else { Console.WriteLine("Цвет НЕ изменен. Ошибка ввода"); }
                         break;
                     case "4":
+                        figure.StatusInquiry();
                         break;
                     case "5":
+                        Console.WriteLine("Введите координату, на сколько хотите изменить:  ");
+                        bool isParseX = float.TryParse(Console.ReadLine(), out float movementX);
+                        if(isParseX)
+                        {
+                            figure.MovementOX(movementX);
+                            Console.WriteLine("Координата изменена");
+                        }
+                        else { Console.WriteLine("Координата не изменена. Ошибка ввода"); }
                         break;
                     case "6":
+                        Console.WriteLine("Введите координату, на сколько хотите изменить:  ");
+                        bool isParseY = float.TryParse(Console.ReadLine(), out float movementY);
+                        if (isParseY)
+                        {
+                            figure.MovementOX(movementY);
+                            Console.WriteLine("Координата изменена");
+                        }
+                        else { Console.WriteLine("Координата не изменена. Ошибка ввода"); }
                         break;
                     case "7":
+                        Console.WriteLine("Для смены фигуры необходимо создать новую, с которой будете работать");
+                        figure = AddFigure();
                         break;
                     case "8":
+                        Console.WriteLine("Выход из программы");
+                        flag = false;
                         break;
                 }
             }
@@ -124,7 +159,6 @@ namespace hw9_Tumakov
         {
             TaskEx();
             TaskHW();
-            //Продумать это нечто с типами данных при добавлении фигуры, дописать метод ActionWithFigure
         }
     }
 }
